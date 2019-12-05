@@ -34,7 +34,7 @@ class App extends Component {
   async componentDidMount() {
     console.log(this.state.socket === null)
     console.log('START')
-    let socket = await socketIOClient(`https://whispering-mountain-64447.herokuapp.com:${process.env.PORT}`)
+    let socket = await socketIOClient()
     this.setState({socket}, () => {
       this.state.socket.on('updateList', videos => {
         this.setState({queue: videos})
