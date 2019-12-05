@@ -2,6 +2,9 @@
   "name": "plyte",
   "version": "1.0.0",
   "main": "server.js",
+  "scripts": {
+    "heroku-postbuild": "cd client && npm install && npm install --only=dev --no-shrinkwrap && npm run build"
+  },
   "dependencies": {
     "express": "^4.17.1",
     "lodash": "^4.17.15",

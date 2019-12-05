@@ -1,4 +1,5 @@
 let express = require('express')
+const path = require('path');
 
 let socket = require('socket.io')
 const _ = require('lodash')
@@ -8,7 +9,7 @@ let app = express()
 const PORT = 4000;
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'))
+  app.use(express.static(path.join(__dirname, 'client/build')));
 }
 
 let server = app.listen(PORT, () => {
