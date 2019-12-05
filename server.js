@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 let server = app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`)
+  console.log(`Listening on port ${process.env.PORT || PORT}`)
 })
 
 let videos = []
