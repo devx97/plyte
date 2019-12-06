@@ -8,8 +8,8 @@ import YouTubeSearch from 'youtube-search'
 import axios from 'axios'
 import socketIOClient from 'socket.io-client'
 
-const GENIUS_API_KEY = 'DncOPjHRnMOPSe3Yzl56lpCsIah0zalJ-u9UjhWetfuaZ_4lsaA6RYhDsZSTEkWK'  // don't know if storing API keys in here is good
-const YOUTUBE_API_KEY = 'AIzaSyAIc25pwKP0mRywFkE7KoapFL9wPlSzJJE'
+const GENIUS_API_KEY = 'DncOPjHRnMOPSe3Yzl56lpCsIah0zalJ-u9UjhWetfuaZ_4lsaA6RYhDsZSTEkWK'
+const YOUTUBE_API_KEY = 'AIzaSyAUix0z_3t6cttYNadUVm_y9VryTCcjRl0'
 
 class App extends Component {
 
