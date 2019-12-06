@@ -9,7 +9,7 @@ import axios from 'axios'
 import socketIOClient from 'socket.io-client'
 
 const GENIUS_API_KEY = 'DncOPjHRnMOPSe3Yzl56lpCsIah0zalJ-u9UjhWetfuaZ_4lsaA6RYhDsZSTEkWK'
-const YOUTUBE_API_KEY = 'AIzaSyA0xDA1aNnbc274RuL5B2rfSriD4voU_YI'
+const YOUTUBE_API_KEY = 'AIzaSyAyfE1ZVDNN4TzrsqNAAeV_m3vaISoUG8E'
 
 class App extends Component {
 
