@@ -9,7 +9,7 @@ import axios from 'axios'
 import socketIOClient from 'socket.io-client'
 
 const GENIUS_API_KEY = 'DncOPjHRnMOPSe3Yzl56lpCsIah0zalJ-u9UjhWetfuaZ_4lsaA6RYhDsZSTEkWK'
-const YOUTUBE_API_KEY = 'AIzaSyAyfE1ZVDNN4TzrsqNAAeV_m3vaISoUG8E'
+const YOUTUBE_API_KEY = 'AIzaSyA3WXaElbsOKbgao3Sf5-AZf5IspMTH9pw'
 
 class App extends Component {
 
@@ -34,7 +34,7 @@ class App extends Component {
   async componentDidMount() {
     console.log(this.state.socket === null)
     console.log('START')
-    let socket = await socketIOClient()
+    let socket = await socketIOClient(!process.env.PORT && 'http://localhost:4000')
     this.setState({socket}, () => {
       this.state.socket.on('updateList', videos => {
         this.setState({queue: videos})
@@ -63,8 +63,11 @@ class App extends Component {
     }
   }
 
-  onVideoAdd(videoToAdd) {
+  onVideoAdd(videoToAdd, addAsNext) {
     if (!_.find(this.state.queue, obj => obj.id === videoToAdd.id)) { // checking if there is such video on playlist already
+      if (addAsNext)
+      this.state.socket.emit('addAsNext', videoToAdd)
+      else
       this.state.socket.emit('addNewVideo', videoToAdd)
     }
     YouTubeSearch('', {
@@ -89,7 +92,7 @@ class App extends Component {
     if (this.state.queue.length === 0
         || !_.find(this.state.queue, obj => obj.id === selectedVideo.id)) // if there is nothing in queue yet or video user clicked is not on playlist
     {
-      this.onVideoAdd(selectedVideo)
+      this.onVideoAdd(selectedVideo, true)
     }
     // this.setState({selectedVideo})
     this.state.socket.emit('selectVideo', selectedVideo)

@@ -30,8 +30,14 @@ io.on('connection', socket => {
     videos = [...videos, video]
     io.sockets.emit('updateList', videos)
   })
+  socket.on('addAsNext', video => {
+    let currentIndex = videos.findIndex(v => v.id === currentVideo.id)
+    videos.splice(currentIndex + 1, 0, video)
+    io.sockets.emit('updateList', videos)
+  })
   socket.on('selectVideo', selectedVideo => {
     io.sockets.emit('updateVideo', selectedVideo)
+    currentVideo = selectedVideo
   })
   socket.on('removeVideo', video => {
     _.remove(videos, video)
