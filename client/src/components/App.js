@@ -34,7 +34,12 @@ class App extends Component {
   async componentDidMount() {
     console.log(this.state.socket === null)
     console.log('START')
-    let socket = await socketIOClient(!process.env.PORT && 'http://localhost:4000')
+    let socket;
+    if (process.env.PORT) {
+      socket = await socketIOClient()
+    } else {
+      socket = await socketIOClient('http://localhost:4000')
+    }
     this.setState({socket}, () => {
       this.state.socket.on('updateList', videos => {
         this.setState({queue: videos})
