@@ -88,7 +88,7 @@ class App extends Component {
           video.title = parsedTitleEl.documentElement.textContent
           return video
         })
-        this.setState({videos: videos.slice(0, 5)}) //there's a bug and you got one item less in response so i'm requesting one more
+        this.setState({videos: videos.slice(0, 3)}) //there's a bug and you got one item less in response so i'm requesting one more
       }
     })
   }
