@@ -7,9 +7,13 @@ import _ from 'lodash'
 import YouTubeSearch from 'youtube-search'
 import axios from 'axios'
 import socketIOClient from 'socket.io-client'
+import {CssBaseline, Typography, createMuiTheme, Paper, Grid} from '@material-ui/core'
+import {ToggleButton} from '@material-ui/lab'
+import {CheckBox, CheckBoxOutlineBlank} from '@material-ui/icons'
+import {ThemeProvider} from "@material-ui/styles";
 
 const GENIUS_API_KEY = 'DncOPjHRnMOPSe3Yzl56lpCsIah0zalJ-u9UjhWetfuaZ_4lsaA6RYhDsZSTEkWK'
-const YOUTUBE_API_KEY = 'AIzaSyA3WXaElbsOKbgao3Sf5-AZf5IspMTH9pw'
+const YOUTUBE_API_KEY = 'AIzaSyCqDTrKdPZ-MjqMdJ7P25W_KV4m9yC92WU'
 
 class App extends Component {
 
@@ -27,18 +31,41 @@ class App extends Component {
       geniusSongUrl: '',
       queue: [],
       currentIndex: 0,
-      master: false
+      master: true,
+      playerHeight: null,
+    }
+    this.videoPl = React.createRef()
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (!this.state.playerHeight && this.videoPl && this.videoPl.current
+        && this.videoPl.current.childNodes.length
+        > 0
+        && this.videoPl.current.childNodes[0].childNodes.length > 0
+        && this.videoPl.current.childNodes[0].childNodes[0].offsetHeight) {
+      this.setState({
+        playerHeight: this.videoPl && this.videoPl.current && this.videoPl.current.childNodes.length
+            > 0
+            && this.videoPl.current.childNodes[0].childNodes.length > 0
+            && this.videoPl.current.childNodes[0].childNodes[0].offsetHeight
+      })
     }
   }
 
-  async componentDidMount() {
+  componentDidMount = async () => {
+    window.addEventListener("resize", () => this.setState({
+      playerHeight: this.videoPl && this.videoPl.current && this.videoPl.current.childNodes.length
+          > 0
+          && this.videoPl.current.childNodes[0].childNodes.length > 0
+          && this.videoPl.current.childNodes[0].childNodes[0].offsetHeight
+    }));
     console.log('START')
     let socket;
-    // if (process.env.PORT) {
+    if (process.env.PORT) {
       socket = await socketIOClient()
-    // } else {
-    //   socket = await socketIOClient('http://localhost:4000')
-    // }
+    } else {
+      socket = await socketIOClient('http://192.168.8.10:4000')
+    }
     this.setState({socket}, () => {
       this.state.socket.on('updateList', videos => {
         this.setState({queue: videos})
@@ -61,7 +88,7 @@ class App extends Component {
             video.title = parsedTitleEl.documentElement.textContent
             return video
           })
-          this.setState({videos: videos.slice(0, 3)}) //there's a bug and you got one item less in response so i'm requesting one more
+          this.setState({videos: videos.slice(0, 5)}) //there's a bug and you got one item less in response so i'm requesting one more
         }
       })
     }
@@ -69,10 +96,11 @@ class App extends Component {
 
   onVideoAdd(videoToAdd, addAsNext) {
     if (!_.find(this.state.queue, obj => obj.id === videoToAdd.id)) { // checking if there is such video on playlist already
-      if (addAsNext)
-      this.state.socket.emit('addAsNext', videoToAdd)
-      else
-      this.state.socket.emit('addNewVideo', videoToAdd)
+      if (addAsNext) {
+        this.state.socket.emit('addAsNext', videoToAdd)
+      } else {
+        this.state.socket.emit('addNewVideo', videoToAdd)
+      }
     }
     YouTubeSearch('', {
       maxResults: 6,
@@ -87,7 +115,7 @@ class App extends Component {
           video.title = parsedTitleEl.documentElement.textContent
           return video
         })
-        this.setState({videos: videos.slice(0, 3)}) //there's a bug and you got one item less in response so i'm requesting one more
+        this.setState({videos: videos.slice(0, 5)}) //there's a bug and you got one item less in response so i'm requesting one more
       }
     })
   }
@@ -133,10 +161,6 @@ class App extends Component {
 
   }
 
-  onRemoveSelect(videoToRemove) { // this function is searching for provided video and is deleting this one from playlist
-    this.setState({queue: _.without(this.state.queue, videoToRemove)})
-  }
-
   onVideoEnds(video, event) {
     // eslint-disable-next-line
     if (event.data === YT.PlayerState.ENDED) {
@@ -152,32 +176,80 @@ class App extends Component {
     const videoSearch = _.debounce(term => { // searching for video 300ms after user stopped typing
       this.videoSearch(term)
     }, 300)
+    if (this.videoPl && this.videoPl.current && this.videoPl.current.childNodes.length > 0
+        && this.videoPl.current.childNodes[0].childNodes.length > 0
+        && this.videoPl.current.childNodes[0].childNodes[0].offsetHeight
+    ) {
+      console.log(this.videoPl.current.childNodes[0].childNodes[0].offsetHeight)
+    }
+    console.log(this.videoPl)
+    console.log(this.state.playerHeight)
+
+    const theme = createMuiTheme({
+      palette: {
+        type: "dark",
+      },
+    });
 
     return (
-        <div>
-          <SearchBar onSearchTermChange={videoSearch}/>
-          <VideoList
-              onVideoAdd={videoToAdd => this.onVideoAdd(videoToAdd)}
-              onVideoSelect={selectedVideo => this.onVideoSelect(selectedVideo)}
-              videos={this.state.videos}/>
-          <div className="columns">
-            <VideoDetail
-                onVideoEnds={(video, event) => this.onVideoEnds(video, event)}
-                geniusSongUrl={this.state.geniusSongUrl}
-                video={this.state.selectedVideo}/>
-            <div className="column is-one-third video-playlist">
-              {this.state.queue.length > 0 &&
-              <button onClick={() => this.setState({master: !this.state.master})}>
-                Master mode {this.state.master ? 'on' : 'off'}
-              </button>}
+        <ThemeProvider theme={theme}>
+          <CssBaseline/>
+          <Paper style={{maxWidth: 1200, margin: '0 auto', padding: 5}} elevation={3}>
+            <Grid
+                container
+                alignItems="center"
+                justify="center"
+            >
+              <Grid item>
+                <SearchBar onSearchTermChange={videoSearch}/>
+              </Grid>
+              <Grid item>
+                <ToggleButton
+                    value="check"
+                    selected={this.state.master}
+                    size={'small'}
+                    onChange={() => this.setState({master: !this.state.master})}
+                >
+                  <Typography variant="subtitle2">
+                    Host
+                  </Typography>
+                  {this.state.master ?
+                      <CheckBox
+                          fontSize="small"
+                          color="primary"/>
+                      :
+                      <CheckBoxOutlineBlank
+                          fontSize="small"/>}
+                </ToggleButton>
+              </Grid>
+            </Grid>
+
+            <Grid container
+                  direction="row"
+                  justify="space-evenly"
+                  alignItems="stretch"
+                  spacing={1}>
+              <VideoList
+                  onVideoAdd={videoToAdd => this.onVideoAdd(videoToAdd)}
+                  onVideoSelect={selectedVideo => this.onVideoSelect(selectedVideo)}
+                  videos={this.state.videos.slice(0, window.innerWidth > 1080 ? 5 : 3)}/>
+            </Grid>
+
+            <Grid container style={{overflow: 'hidden', paddingTop: 16}} justify="center"
+                  ref={this.videoPl}>
+              <VideoDetail
+                  onVideoEnds={(video, event) => this.onVideoEnds(video, event)}
+                  geniusSongUrl={this.state.geniusSongUrl}
+                  video={this.state.selectedVideo}/>
               <VideoPlaylist
+                  playerHeight={this.state.playerHeight}
                   onRemoveSelect={selectedVideo => this.state.socket.emit('removeVideo',
                       selectedVideo)}
                   onVideoSelect={selectedVideo => this.onVideoSelect(selectedVideo)}
                   playlist={this.state.queue}/>
-            </div>
-          </div>
-        </div>
+            </Grid>
+          </Paper>
+        </ThemeProvider>
     )
   }
 }
