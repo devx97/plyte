@@ -51,7 +51,7 @@ export default () => {
     return () => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [player])
+  }, [player, dispatch])
 
   return !video
       ? null

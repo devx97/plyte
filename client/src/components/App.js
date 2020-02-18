@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect} from 'react'
 
 import {createMuiTheme, CssBaseline, Grid, Paper, Typography} from '@material-ui/core'
 import {ToggleButton} from '@material-ui/lab'
@@ -24,11 +24,7 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline/>
         <Paper style={{maxWidth: 1200, margin: '0 auto', padding: 5}} elevation={3}>
-          <Grid
-              container
-              alignItems="center"
-              justify="center"
-          >
+          <Grid container alignItems="center" justify="center">
             <Grid item>
               <SearchBar/>
             </Grid>
