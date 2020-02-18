@@ -9,8 +9,10 @@ export default () => ({getState, dispatch}) => next => action => {
   switch (action.type) {
     case INIT_SOCKET:
       if (process.env.PORT) {
+        console.log('HEROKU')
         socket = socketIO()
       } else {
+        console.log('LOCALHOST')
         socket = socketIO('http://192.168.0.15:4000')
       }
       socket.on('updateList', videos => {
