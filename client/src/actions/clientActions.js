@@ -8,7 +8,7 @@ import {
   UPDATE_PLAYER_HEIGHT, UPDATE_MASTER
 } from './types'
 
-const YOUTUBE_API_KEY = 'AIzaSyCqDTrKdPZ-MjqMdJ7P25W_KV4m9yC92WU'
+const YOUTUBE_API_KEY = 'AIzaSyAyfE1ZVDNN4TzrsqNAAeV_m3vaISoUG8E'
 
 export const searchForVideos = (term, videoId) => async dispatch => {
   try {
