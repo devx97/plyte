@@ -1,35 +1,39 @@
-import React, {Component} from 'react'
-import TextField from '@material-ui/core/TextField'
-import InputAdornment from '@material-ui/core/InputAdornment'
+import React, {useCallback, useState} from 'react'
+import {TextField, InputAdornment} from '@material-ui/core'
 import Search from '@material-ui/icons/Search';
+import {searchForVideos} from '../actions'
+import {useDispatch} from 'react-redux'
+import {debounce} from 'lodash'
 
-class SearchBar extends Component {
-  constructor(props) {
-    super(props)
+export default () => {
+  const [term, setTerm] = useState('')
+  const dispatch = useDispatch()
 
-    this.state = {term: ''}
-  }
+  const searchForVideo = useCallback(debounce(term => {
+    dispatch(searchForVideos(term))
+  }, 300), [])
 
-  render() {
-    return <TextField
-        style={{margin: 10, textAlign: 'center'}}
-        label="Search"
-        value={this.state.term}
-        onChange={event => this.onInputChange(event.target.value)}
-        InputProps={{
-          startAdornment: (
-              <InputAdornment position="start">
-                <Search/>
-              </InputAdornment>
-          ),
-        }}
-    />
-  }
-
-  onInputChange(term) {
-    this.setState({term})
-    this.props.onSearchTermChange(term)
-  }
+  return <TextField
+      autoFocus
+      style={{margin: 10, textAlign: 'center'}}
+      label="Search"
+      value={term}
+      onChange={event => {
+        const term = event.target.value
+        setTerm(term)
+        if (term.length) {
+          searchForVideo(term)
+        }
+      }}
+      onKeyDown={event => {
+        if (event.keyCode === 13) {
+        }
+      }}
+      InputProps={{
+        startAdornment:
+            <InputAdornment position="start">
+              <Search/>
+            </InputAdornment>
+      }}
+  />
 }
-
-export default SearchBar

@@ -10,29 +10,29 @@ import {
   Typography,
   Paper
 } from '@material-ui/core'
+import {updateCurrentVideo, removeVideo} from '../actions'
+import {useDispatch} from 'react-redux'
 
-const VideoListItem = ({video, onVideoSelect, onRemoveSelect}) => {
-  const imageUrl = video.thumbnails.medium.url
+export default ({video}) => {
+  const dispatch = useDispatch()
 
-  return (
-      <Paper>
-        <ListItem style={{paddingTop: 0, paddingBottom: 0, marginTop: 2, marginBotom: 2}} key={video.id} button
-                  onClick={() => onVideoSelect(video)}>
-          <ListItemAvatar style={{paddingRight: 8}}>
-            <Avatar style={{height: '50px', width: '70px'}} variant="square" src={imageUrl}
-                    alt={"Thumbnail"}/>
-          </ListItemAvatar>
-          <ListItemText disableTypography>
-            <Typography variant="subtitle1" style={{height: '3.3em', overflow: 'hidden'}}
-                        align="left">{video.title}</Typography>
-          </ListItemText>
-          <ListItemSecondaryAction>
-            <IconButton onClick={() => onRemoveSelect(video)}
-                        edge={'end'}><DeleteIcon/></IconButton>
-          </ListItemSecondaryAction>
-        </ListItem>
-      </Paper>
-  )
+  return <Paper>
+    <ListItem style={{paddingTop: 0, paddingBottom: 0, marginTop: 2, marginBottom: 2}}
+              key={video.id} button
+              onClick={() => dispatch(updateCurrentVideo(video))}>
+      <ListItemAvatar style={{paddingRight: 8}}>
+        <Avatar style={{height: '50px', width: '70px'}} variant="square"
+                src={video.thumbnails.medium.url}
+                alt={"Thumbnail"}/>
+      </ListItemAvatar>
+      <ListItemText disableTypography>
+        <Typography variant="subtitle1" style={{height: '3.3em', overflow: 'hidden'}}
+                    align="left">{video.title}</Typography>
+      </ListItemText>
+      <ListItemSecondaryAction>
+        <IconButton onClick={() => dispatch(removeVideo(video))}
+                    edge={'end'}><DeleteIcon/></IconButton>
+      </ListItemSecondaryAction>
+    </ListItem>
+  </Paper>
 }
-
-export default VideoListItem

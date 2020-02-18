@@ -1,3 +1,3 @@
-export default function xD (test, cb) {
+export default function (test, cb) {
 
 }

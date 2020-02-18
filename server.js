@@ -23,26 +23,24 @@ let io = socket(server)
 
 io.on('connection', socket => {
   socket.emit('updateList', videos)
-  console.log(socket.id)
-  console.log('User connected')
   socket.emit('setup', {videos, currentVideo})
-  socket.on('addNewVideo', video => {
-    videos = [...videos, video]
-    io.sockets.emit('updateList', videos)
-  })
-  socket.on('addAsNext', video => {
-    console.log(videos)
-    let currentIndex = videos && currentVideo ? videos.findIndex(v => v.id === currentVideo.id) : 0
-    videos.splice(currentIndex + 1, 0, video)
+  socket.on('addVideo', (video, addAsNext) => {
+    console.log(addAsNext)
+    if (addAsNext) {
+      let currentIndex = videos && currentVideo ? videos.findIndex(v => v.id === currentVideo.id) : 0
+      videos.splice(currentIndex + 1, 0, video)
+      io.sockets.emit('updateVideo', video)
+    } else {
+      videos = [...videos, video]
+    }
     io.sockets.emit('updateList', videos)
   })
   socket.on('selectVideo', selectedVideo => {
-    io.sockets.emit('updateVideo', selectedVideo)
     currentVideo = selectedVideo
+    io.sockets.emit('updateVideo', selectedVideo)
   })
   socket.on('removeVideo', video => {
     _.remove(videos, video)
     io.sockets.emit('updateList', videos)
   })
-  socket.on('disconnect', () => console.log('User disconnected'))
 })

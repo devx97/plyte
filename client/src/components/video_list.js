@@ -1,26 +1,19 @@
 import React from 'react'
 import VideoListItem from './video_list_item'
+import {Box} from '@material-ui/core'
+import {useSelector} from 'react-redux'
 
-const VideoList = ({videos, onVideoAdd, onVideoSelect}) => {
-  if (!videos.length) {
-    return <div className="loading">Click the title to play the video<br/>Click the thumbnail to add
-      to the playlist
-    </div>
-  }
+export default () => {
+  const videos = useSelector(state => state.client.suggestedVideos)
 
-  const videoItems = videos.map(video => {
-    return <VideoListItem
-        onVideoAdd={onVideoAdd}
-        onVideoSelect={onVideoSelect}
-        key={video.id}
-        video={video}/>
-  })
-
-  return (
-      <React.Fragment>
-        {videoItems}
-      </React.Fragment>
-  )
+  return videos && videos.length
+      ? videos.map(video =>
+          <VideoListItem
+              key={video.id}
+              video={video}
+          />)
+      : <Box>
+        Click the title to play the video<br/>
+        Click the thumbnail to add to the playlist
+      </Box>
 }
-
-export default VideoList
