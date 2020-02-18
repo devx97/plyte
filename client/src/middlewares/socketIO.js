@@ -14,7 +14,6 @@ export default () => ({getState, dispatch}) => next => action => {
         socket = socketIO('http://192.168.0.15:4000')
       }
       socket.on('updateList', videos => {
-        console.log('XDD')
         dispatch(updateLocalPlaylist(videos))
       })
       socket.on('updateVideo', currentVideo => {
@@ -22,6 +21,7 @@ export default () => ({getState, dispatch}) => next => action => {
       })
       return
     case ADD_VIDEO:
+      console.log('ADDING VIDEO')
       const playlist = getState().client.playlist
       if (!_.find(playlist, obj => obj.id === action.video.id)) {
         socket.emit('addVideo', action.video, action.addAsNext)
