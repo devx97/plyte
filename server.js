@@ -6,14 +6,14 @@ const _ = require('lodash')
 
 let app = express()
 
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')));
 }
 
-let server = app.listen(process.env.PORT || PORT, () => {
-  console.log(`Listening on port ${process.env.PORT || PORT}`)
+let server = app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`)
 })
 
 let videos = []
