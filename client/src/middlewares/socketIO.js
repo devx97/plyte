@@ -5,10 +5,14 @@ import _ from 'lodash'
 
 let socket
 
-export default url => ({getState, dispatch}) => next => action => {
+export default () => ({getState, dispatch}) => next => action => {
   switch (action.type) {
     case INIT_SOCKET:
-      socket = socketIO(url)
+      if (process.env.PORT) {
+        socket = socketIO()
+      } else {
+        socket = socketIO('http://192.168.0.15:4000')
+      }
       socket.on('updateList', videos => {
         console.log('XDD')
         dispatch(updateLocalPlaylist(videos))

@@ -7,7 +7,7 @@ import rootReducer from '../reducers'
 
 const store = createStore(rootReducer,
     composeWithDevTools(
-        applyMiddleware(thunk, socketIO(process.env.PORT || 'http://192.168.0.15:4000'))
+        applyMiddleware(thunk, socketIO())
     ))
 
 export default store
