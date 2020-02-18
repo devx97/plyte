@@ -7,7 +7,6 @@ export default () => {
   const playlist = useSelector(state => state.client.playlist)
   const playerHeight = useSelector(state => state.client.playerHeight)
   const master = useSelector(state => state.client.master)
-  console.log(window.innerHeight)
 
   return !playlist
       ? null
