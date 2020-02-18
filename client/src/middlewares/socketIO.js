@@ -8,13 +8,10 @@ let socket
 export default () => ({getState, dispatch}) => next => action => {
   switch (action.type) {
     case INIT_SOCKET:
-      console.log(process.env.PORT)
       if (process.env.PORT) {
-        console.log('HEROKU')
-        socket = socketIO()
+        socket = socketIO(`http://192.168.0.15:${process.env.PORT}`)
       } else {
-        console.log('LOCALHOST')
-        socket = socketIO('http://192.168.0.15:4000')
+        socket = socketIO()
       }
       socket.on('updateList', videos => {
         dispatch(updateLocalPlaylist(videos))
