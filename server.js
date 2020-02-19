@@ -25,7 +25,6 @@ io.on('connection', socket => {
   socket.emit('updateList', videos)
   socket.emit('setup', {videos, currentVideo})
   socket.on('addVideo', (video, addAsNext) => {
-    console.log('ADDING VIDEO')
     if (addAsNext) {
       let currentIndex = videos && currentVideo ? videos.findIndex(v => v.id === currentVideo.id) : 0
       videos.splice(currentIndex + 1, 0, video)

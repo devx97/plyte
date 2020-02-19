@@ -5,7 +5,7 @@ import {
   UPDATE_PLAYLIST,
   ADD_VIDEO,
   REMOVE_VIDEO,
-  UPDATE_PLAYER_HEIGHT, UPDATE_MASTER
+  UPDATE_PLAYER_HEIGHT, UPDATE_MASTER, SELECT_VIDEO
 } from './types'
 
 const YOUTUBE_API_KEY = 'AIzaSyAyfE1ZVDNN4TzrsqNAAeV_m3vaISoUG8E'
@@ -88,3 +88,8 @@ export const updateMaster = () => (dispatch, getState) => {
     master: !state.client.master
   })
 }
+
+export const requestVideoChange = video => ({
+  type: SELECT_VIDEO,
+  video
+})

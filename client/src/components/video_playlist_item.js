@@ -10,7 +10,7 @@ import {
   Typography,
   Paper
 } from '@material-ui/core'
-import {updateCurrentVideo, removeVideo} from '../actions'
+import {removeVideo, requestVideoChange} from '../actions'
 import {useDispatch} from 'react-redux'
 
 export default ({video}) => {
@@ -19,7 +19,7 @@ export default ({video}) => {
   return <Paper>
     <ListItem style={{paddingTop: 0, paddingBottom: 0, marginTop: 2, marginBottom: 2}}
               key={video.id} button
-              onClick={() => dispatch(updateCurrentVideo(video))}>
+              onClick={() => dispatch(requestVideoChange(video))}>
       <ListItemAvatar style={{paddingRight: 8}}>
         <Avatar style={{height: '50px', width: '70px'}} variant="square"
                 src={video.thumbnails.medium.url}

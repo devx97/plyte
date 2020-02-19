@@ -24,7 +24,6 @@ const generateGeniusSongURL = async title => {
   if (title.length) {
     const res = await axios.get(
         `https://api.genius.com/search?q=${title}&access_token=${GENIUS_API_KEY}`)
-    console.log(res)
     if (res.data.response.hits[0]) {
       geniusSongURL = res.data.response.hits[0].result.url
     }

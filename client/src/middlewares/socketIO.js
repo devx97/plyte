@@ -8,8 +8,8 @@ let socket
 export default () => ({getState, dispatch}) => next => action => {
   switch (action.type) {
     case INIT_SOCKET:
-      if (process.env.PORT) {
-        socket = socketIO(`http://192.168.0.15:${process.env.PORT}`)
+      if (process.env.NODE_ENV === 'development') {
+        socket = socketIO('http://192.168.0.15:4000')
       } else {
         socket = socketIO()
       }
@@ -21,7 +21,6 @@ export default () => ({getState, dispatch}) => next => action => {
       })
       return
     case ADD_VIDEO:
-      console.log('ADDING VIDEO')
       const playlist = getState().client.playlist
       if (!_.find(playlist, obj => obj.id === action.video.id)) {
         socket.emit('addVideo', action.video, action.addAsNext)
