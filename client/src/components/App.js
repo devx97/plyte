@@ -5,13 +5,14 @@ import {ToggleButton} from '@material-ui/lab'
 import {CheckBox, CheckBoxOutlineBlank} from '@material-ui/icons'
 import {ThemeProvider} from "@material-ui/styles";
 
-import SearchBar from './search_bar'
-import VideoList from './video_list'
-import VideoPlaylist from './video_playlist'
-import VideoDetail from './video_detail'
+import SearchBar from './SearchBar'
+import VideoList from './VideoList'
+import VideoPlaylist from './VideoPlaylist'
+import VideoDetail from './VideoDetail'
 import {useDispatch, useSelector} from 'react-redux'
 import {INIT_SOCKET} from '../actions/types'
 import {updateMaster} from '../actions'
+import PlayerControls from './PlayerControls'
 
 const App = () => {
   const master = useSelector(state => state.client.master)
@@ -24,6 +25,11 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline/>
         <Paper style={{maxWidth: 1200, margin: '0 auto', padding: 5}} elevation={3}>
+          <Grid item container justify="center" direction="column"
+                style={{maxWidth: '400px', margin: '0 auto'}}>
+            {!master && <PlayerControls/>}
+          </Grid>
+
           <Grid container alignItems="center" justify="center">
             <Grid item>
               <SearchBar/>

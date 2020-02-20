@@ -22,7 +22,7 @@ export default ({video}) => {
               onClick={() => dispatch(requestVideoChange(video))}>
       <ListItemAvatar style={{paddingRight: 8}}>
         <Avatar style={{height: '50px', width: '70px'}} variant="square"
-                src={video.thumbnails.medium.url}
+                src={video.thumbnailURL}
                 alt={"Thumbnail"}/>
       </ListItemAvatar>
       <ListItemText disableTypography>

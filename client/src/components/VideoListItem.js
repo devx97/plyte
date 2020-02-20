@@ -1,7 +1,7 @@
 import React from 'react'
 import {Grid, Paper, ButtonBase, Typography} from '@material-ui/core'
 import {useDispatch} from 'react-redux'
-import {addVideo} from '../actions'
+import {addSelectedVideo} from '../actions'
 
 export default ({video}) => {
   const dispatch = useDispatch()
@@ -9,8 +9,8 @@ export default ({video}) => {
   return <Grid item container direction="column" xs>
     <Paper elevation={2}>
       <Grid item>
-        <ButtonBase onClick={() => dispatch(addVideo(video))}>
-          <img src={video.thumbnails.medium.url} alt="Thumbnail"
+        <ButtonBase onClick={() => dispatch(addSelectedVideo(video))}>
+          <img src={video.thumbnailURL} alt="Thumbnail"
                style={{
                  margin: '2px',
                  maxWidth: '100%',
@@ -20,7 +20,7 @@ export default ({video}) => {
         </ButtonBase>
       </Grid>
       <Grid item>
-        <ButtonBase onClick={() => dispatch(addVideo(video, true))}>
+        <ButtonBase onClick={() => dispatch(addSelectedVideo(video, true))}>
           <Typography variant="subtitle1" style={{height: '3.3em', overflow: 'hidden'}}
                       align="left">
             {video.title}

@@ -1,5 +1,5 @@
 import React from 'react'
-import VideoListItem from './video_list_item'
+import VideoListItem from './VideoListItem'
 import {Box} from '@material-ui/core'
 import {useSelector} from 'react-redux'
 

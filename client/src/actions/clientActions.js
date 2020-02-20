@@ -1,37 +1,56 @@
-import YouTubeSearch from 'youtube-search'
 import {
   UPDATE_SUGGESTED_VIDEOS,
   UPDATE_CURRENT_VIDEO,
   UPDATE_PLAYLIST,
   ADD_VIDEO,
   REMOVE_VIDEO,
-  UPDATE_PLAYER_HEIGHT, UPDATE_MASTER, SELECT_VIDEO
+  UPDATE_PLAYER_HEIGHT, UPDATE_MASTER, SELECT_VIDEO, REQUEST_NEXT_VIDEO
 } from './types'
+
+import axios from 'axios'
+import querystring from 'querystring'
 
 const YOUTUBE_API_KEY = 'AIzaSyAyfE1ZVDNN4TzrsqNAAeV_m3vaISoUG8E'
 
-export const searchForVideos = (term, videoId) => async dispatch => {
+const YouTubeSearchAPI = 'https://www.googleapis.com/youtube/v3/search?'
+const YouTubeVideosAPI = 'https://www.googleapis.com/youtube/v3/videos?'
+
+export const searchForVideos = ({term, id}) => async dispatch => {
   try {
     const opts = {
+      q: term,
       maxResults: 6,
       type: 'video',
-      key: YOUTUBE_API_KEY
+      key: YOUTUBE_API_KEY,
+      part: 'snippet'
     }
-    if (videoId) {
-      opts.relatedToVideoId = videoId
+    if (id) {
+      opts.relatedToVideoId = id
     }
-    let response = await YouTubeSearch(term, opts)
-
-    let videos = response.results
-    videos.map(video => {
-      let parsedTitleEl = new DOMParser().parseFromString(video.title, "text/html");
-      video.title = parsedTitleEl.documentElement.textContent
-      return video
+    let response = await axios.get(YouTubeSearchAPI + querystring.stringify(opts))
+    let videos = response.data.items
+    videos = videos.map(video => {
+      const formattedVideo = {}
+      let parsedTitleEl = new DOMParser().parseFromString(video.snippet.title, "text/html");
+      formattedVideo.title = parsedTitleEl.documentElement.textContent
+      formattedVideo.id = video.id.videoId
+      formattedVideo.thumbnailURL = video.snippet.thumbnails.medium.url
+      return formattedVideo
     })
     dispatch(updateSuggestedVideos(videos.slice(0, 5)))
   } catch (e) {
     console.log(e)
   }
+}
+
+const getDetailsAboutVideo = async id => {
+  const opts = {
+    id,
+    part: 'contentDetails',
+    key: YOUTUBE_API_KEY
+  }
+  let response = await axios.get(YouTubeVideosAPI + querystring.stringify(opts))
+  return response.data.items
 }
 
 const updateSuggestedVideos = videos => ({
@@ -49,26 +68,34 @@ export const updateCurrentVideo = video => ({
   video
 })
 
-export const playNextVideo = () => (dispatch, getState) => {
-  const state = getState()
-  const playlist = state.client.playlist
-  const currentVideo = state.client.currentVideo
-  const index = playlist.findIndex(i => i.id === currentVideo.id)
-  if (playlist[index + 1]) {
-    dispatch({
-      type: UPDATE_CURRENT_VIDEO,
-      video: playlist[index + 1]
-    })
-  }
-}
+export const playNextVideo = () => ({
+  type: REQUEST_NEXT_VIDEO
+})
 
 export const addVideo = (video, addAsNext) => dispatch => {
-  dispatch(searchForVideos('', video.id))
+  dispatch(searchForVideos({id: video.id}))
   dispatch({
     type: ADD_VIDEO,
     video,
     addAsNext
   })
+}
+
+export const addSelectedVideo = (video, addAsNext) => async dispatch => {
+  const details = await getDetailsAboutVideo(video.id)
+  console.log(details)
+  // video.duration
+  dispatch(addVideo(video, addAsNext))
+}
+
+export const addFirstVideo = () => (dispatch, getState) => {
+  try {
+    const video = getState().client.suggestedVideos[0]
+    dispatch(addVideo(video))
+  } catch (e) {
+    console.log(
+        'You haven\'t searched for videos but still you want to add first one with Enter key')
+  }
 }
 
 export const removeVideo = video => ({

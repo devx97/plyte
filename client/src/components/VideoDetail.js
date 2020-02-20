@@ -1,8 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react'
 import YouTube from 'react-youtube'
+import ReactPlayer from 'react-player'
 import {Grid, Typography, Link, Button} from '@material-ui/core'
 import {useDispatch, useSelector} from 'react-redux'
 import axios from 'axios'
+import store from '../store'
 
 import {playNextVideo, updatePlayerHeight} from '../actions'
 
@@ -32,15 +34,26 @@ const generateGeniusSongURL = async title => {
 }
 
 export default () => {
-  const video = useSelector(state => state.client.currentVideo)
+  const video = useSelector(state => state.player.currentVideo)
   const dispatch = useDispatch()
   const player = useRef(null)
   const [geniusURL, setGeniusURL] = useState('')
+  const volume = useSelector(state => state.player.volume)
+  let currentPlayback = 0
+  const clientPlayback = useSelector(state => state.player.clientPlayback)
+  const serverPlayback = useSelector(state => state.player.serverPlayback)
+  if (clientPlayback !== serverPlayback) {
+
+  }
 
   useEffect(() => async () => {
     const URL = await generateGeniusSongURL(video && video.title)
     setGeniusURL(URL)
   }, [video])
+
+  useEffect(() => {
+    video && dispatch(updatePlayerHeight(player && player.current.scrollHeight))
+  })
 
   useEffect(() => {
     const handleResize = () => {
@@ -56,15 +69,29 @@ export default () => {
       ? null
       : <Grid item container direction="column" sm={12} md={8}>
         <Grid ref={player} item className="video">
-          <YouTube
-              opts={{playerVars: {autoplay: 1}}}
-              videoId={video.id}
-              onStateChange={event => {
-                // eslint-disable-next-line
-                if (event.data === YT.PlayerState.ENDED) {
-                  dispatch(playNextVideo())
-                }
-              }}
+          {/*<YouTube*/}
+          {/*    opts={{playerVars: {autoplay: 1}}}*/}
+          {/*    videoId={video.id}*/}
+          {/*    onStateChange={event => {*/}
+          {/*      // eslint-disable-next-line*/}
+          {/*      if (event.data === YT.PlayerState.ENDED) {*/}
+          {/*        dispatch(playNextVideo())*/}
+          {/*      }*/}
+          {/*    }}*/}
+          {/*/>*/}
+          <ReactPlayer
+              ref={player}
+              controls
+              playing
+              url={`https://www.youtube.com/watch?v=${video.id}`}
+              config={{youtube: {playerVars: {autoplay: 1}}}}
+              onDuration={event => console.log(event)}
+              progressInterval={1}
+              onEnded={() => dispatch(playNextVideo())}
+              height={'100%'}
+              width={'100%'}
+              volume={volume / 100}
+              style={{position: 'absolute', top: 0, left: 0}}
           />
         </Grid>
         <Grid container item justify="space-between" style={{paddingTop: 5}}>
