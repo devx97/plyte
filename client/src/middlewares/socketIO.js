@@ -2,15 +2,14 @@ import socketIO from 'socket.io-client'
 import {
   updateLocalPlaylist,
   updateCurrentVideo,
-  updateVolume,
-  updateServerPlayback,
-  updateClientPlayback
+  updatePlayback,
+  changePlayback, updatePlayerState
 } from '../actions'
 import {
   ADD_VIDEO,
-  INIT_SOCKET,
+  INIT_SOCKET, PAUSE_VIDEO, PLAY_VIDEO,
   REMOVE_VIDEO,
-  REQUEST_NEXT_VIDEO, REQUEST_PLAYBACK_CHANGE, REQUEST_VOLUME_CHANGE,
+  REQUEST_NEXT_VIDEO, REQUEST_PLAYBACK_CHANGE, REQUEST_PLAYBACK_UPDATE, REQUEST_VOLUME_CHANGE,
   SELECT_VIDEO
 } from '../actions/types'
 import _ from 'lodash'
@@ -27,7 +26,7 @@ export default () => ({getState, dispatch}) => next => action => {
       }
       socket.on('setup', data => {
         dispatch(updateLocalPlaylist(data.playlist))
-        dispatch(updateVolume(data.volume))
+        dispatch(updatePlayerState(data.playerState))
       })
       socket.on('updateList', videos => {
         dispatch(updateLocalPlaylist(videos))
@@ -35,12 +34,19 @@ export default () => ({getState, dispatch}) => next => action => {
       socket.on('updateVideo', currentVideo => {
         dispatch(updateCurrentVideo(currentVideo))
       })
-      socket.on('updateVolume', volume => {
-        dispatch(updateVolume(volume))
+      socket.on('updatePlayerState', playerState => {
+        dispatch(updatePlayerState(playerState))
       })
-      socket.on('newPlayback', playback => {
-        dispatch(updateClientPlayback(playback))
-        dispatch(updateServerPlayback(playback))
+      socket.on('updatePlayback', playback => {
+        if (!getState().player.seeking) {
+          dispatch(updatePlayback(playback))
+        }
+      })
+      socket.on('changePlayback', playback => {
+        dispatch(updatePlayback(playback))
+        if (getState().client.master) {
+          dispatch(changePlayback())
+        }
       })
       return
     case ADD_VIDEO:
@@ -57,8 +63,14 @@ export default () => ({getState, dispatch}) => next => action => {
       return socket.emit('removeVideo', action.video)
     case REQUEST_VOLUME_CHANGE:
       return socket.emit('changeVolume', action.volume)
+    case REQUEST_PLAYBACK_UPDATE:
+      return socket.emit('updatePlayback', action.playback)
     case REQUEST_PLAYBACK_CHANGE:
-      return socket.emit('changePlayback', action.newPlayback)
+      return socket.emit('changePlayback', action.playback)
+    case PLAY_VIDEO:
+      return socket.emit('playVideo')
+    case PAUSE_VIDEO:
+      return socket.emit('pauseVideo')
     default:
       return next(action)
   }

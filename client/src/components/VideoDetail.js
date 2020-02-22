@@ -1,12 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react'
-import YouTube from 'react-youtube'
 import ReactPlayer from 'react-player'
 import {Grid, Typography, Link, Button} from '@material-ui/core'
 import {useDispatch, useSelector} from 'react-redux'
 import axios from 'axios'
-import store from '../store'
 
-import {playNextVideo, updatePlayerHeight} from '../actions'
+import {
+  playNextVideo,
+  updatePlayerHeight,
+  changePlaybackSuccess, requestPlaybackUpdate
+} from '../actions'
 
 const GENIUS_API_KEY = 'DncOPjHRnMOPSe3Yzl56lpCsIah0zalJ-u9UjhWetfuaZ_4lsaA6RYhDsZSTEkWK'
 
@@ -36,15 +38,13 @@ const generateGeniusSongURL = async title => {
 export default () => {
   const video = useSelector(state => state.player.currentVideo)
   const dispatch = useDispatch()
-  const player = useRef(null)
+  const player = useRef()
+  const playerHeight = useSelector(state => state.client.playerHeight)
   const [geniusURL, setGeniusURL] = useState('')
   const volume = useSelector(state => state.player.volume)
-  let currentPlayback = 0
-  const clientPlayback = useSelector(state => state.player.clientPlayback)
-  const serverPlayback = useSelector(state => state.player.serverPlayback)
-  if (clientPlayback !== serverPlayback) {
-
-  }
+  const playback = useSelector(state => state.player.playback)
+  const isPlaying = useSelector(state => state.player.isPlaying)
+  const playerShouldBeUpdated = useSelector(state => state.player.playerShouldBeUpdated)
 
   useEffect(() => async () => {
     const URL = await generateGeniusSongURL(video && video.title)
@@ -52,41 +52,45 @@ export default () => {
   }, [video])
 
   useEffect(() => {
-    video && dispatch(updatePlayerHeight(player && player.current.scrollHeight))
-  })
+    if (player && player.current && player.current.scrollHeight) {
+      if (playerHeight !== player.current.scrollHeight) {
+        video && dispatch(updatePlayerHeight(player.current.scrollHeight))
+      }
+    }
+  }, [player, video, dispatch, playerHeight])
 
   useEffect(() => {
     const handleResize = () => {
-      dispatch(updatePlayerHeight(player && player.current.scrollHeight))
+      if (player && player.current && player.current.scrollHeight) {
+        if (playerHeight !== player.current.scrollHeight) {
+          dispatch(updatePlayerHeight(player.current.scrollHeight))
+        }
+      }
     }
     window.addEventListener('resize', handleResize)
     return () => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [player, dispatch])
+  }, [player, dispatch, playerHeight])
+
+  if (playerShouldBeUpdated && player.current) {
+    player.current.seekTo(playback)
+    dispatch(changePlaybackSuccess())
+  }
 
   return !video
       ? null
       : <Grid item container direction="column" sm={12} md={8}>
-        <Grid ref={player} item className="video">
-          {/*<YouTube*/}
-          {/*    opts={{playerVars: {autoplay: 1}}}*/}
-          {/*    videoId={video.id}*/}
-          {/*    onStateChange={event => {*/}
-          {/*      // eslint-disable-next-line*/}
-          {/*      if (event.data === YT.PlayerState.ENDED) {*/}
-          {/*        dispatch(playNextVideo())*/}
-          {/*      }*/}
-          {/*    }}*/}
-          {/*/>*/}
+        <Grid item className="video">
           <ReactPlayer
               ref={player}
               controls
-              playing
+              playing={isPlaying}
               url={`https://www.youtube.com/watch?v=${video.id}`}
+              onProgress={progress => {
+                dispatch(requestPlaybackUpdate(progress.playedSeconds))
+              }}
               config={{youtube: {playerVars: {autoplay: 1}}}}
-              onDuration={event => console.log(event)}
-              progressInterval={1}
               onEnded={() => dispatch(playNextVideo())}
               height={'100%'}
               width={'100%'}

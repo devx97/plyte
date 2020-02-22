@@ -4,13 +4,14 @@ import {
   UPDATE_PLAYLIST,
   ADD_VIDEO,
   REMOVE_VIDEO,
-  UPDATE_PLAYER_HEIGHT, UPDATE_MASTER, SELECT_VIDEO, REQUEST_NEXT_VIDEO
+  UPDATE_PLAYER_HEIGHT, UPDATE_MASTER, SELECT_VIDEO, REQUEST_NEXT_VIDEO, REQUEST_PLAYBACK_CHANGE
 } from './types'
 
 import axios from 'axios'
 import querystring from 'querystring'
+import moment, {ISO_8601} from 'moment'
 
-const YOUTUBE_API_KEY = 'AIzaSyAyfE1ZVDNN4TzrsqNAAeV_m3vaISoUG8E'
+const YOUTUBE_API_KEY = 'AIzaSyCVdT6xJMmub0pTiQfRJLOP0r-K3r9vpnE'
 
 const YouTubeSearchAPI = 'https://www.googleapis.com/youtube/v3/search?'
 const YouTubeVideosAPI = 'https://www.googleapis.com/youtube/v3/videos?'
@@ -50,7 +51,7 @@ const getDetailsAboutVideo = async id => {
     key: YOUTUBE_API_KEY
   }
   let response = await axios.get(YouTubeVideosAPI + querystring.stringify(opts))
-  return response.data.items
+  return response.data.items[0].contentDetails
 }
 
 const updateSuggestedVideos = videos => ({
@@ -83,8 +84,7 @@ export const addVideo = (video, addAsNext) => dispatch => {
 
 export const addSelectedVideo = (video, addAsNext) => async dispatch => {
   const details = await getDetailsAboutVideo(video.id)
-  console.log(details)
-  // video.duration
+  video.duration = moment.duration(details.duration, ISO_8601).asSeconds()
   dispatch(addVideo(video, addAsNext))
 }
 
@@ -109,14 +109,18 @@ export const updatePlayerHeight = height => ({
 })
 
 export const updateMaster = () => (dispatch, getState) => {
-  const state = getState()
   dispatch({
     type: UPDATE_MASTER,
-    master: !state.client.master
+    master: !getState().client.master
   })
 }
 
 export const requestVideoChange = video => ({
   type: SELECT_VIDEO,
   video
+})
+
+export const requestPlaybackChange = playback => ({
+  type: REQUEST_PLAYBACK_CHANGE,
+  playback
 })
