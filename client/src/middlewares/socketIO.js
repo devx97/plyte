@@ -26,12 +26,14 @@ export default () => ({getState, dispatch}) => next => action => {
       }
       socket.on('setup', data => {
         dispatch(updateLocalPlaylist(data.playlist))
+        dispatch(updateCurrentVideo(data.currentVideo))
         dispatch(updatePlayerState(data.playerState))
       })
       socket.on('updateList', videos => {
         dispatch(updateLocalPlaylist(videos))
       })
       socket.on('updateVideo', currentVideo => {
+        document.title = currentVideo.title
         dispatch(updateCurrentVideo(currentVideo))
       })
       socket.on('updatePlayerState', playerState => {

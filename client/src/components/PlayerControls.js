@@ -35,8 +35,9 @@ export default () => {
   let indexOfFirstNumber
   let duration
   let elapsed = new Date(1000 * Math.round(playback)).toISOString().substr(11, 8)
+
   if (video && video.duration) {
-    duration = new Date(1000 * Math.round(video.duration)).toISOString().substr(11, 8)
+    duration = new Date(1000 * Math.round(video.duration || 0)).toISOString().substr(11, 8)
     indexOfFirstNumber = getIndexOfFirstNumber(duration)
     elapsed = elapsed.substr(indexOfFirstNumber, 8 - indexOfFirstNumber)
     duration = duration.substr(indexOfFirstNumber, 8 - indexOfFirstNumber)
@@ -49,7 +50,7 @@ export default () => {
       </Typography>
     </Grid>
 
-    <Grid ite container spacing={1} justify="center" alignItems="center">
+    <Grid item container spacing={1} justify="center" alignItems="center">
       <Grid item>
         <ButtonBase onClick={() => {
           dispatch(requestVideoChange(-1))

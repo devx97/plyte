@@ -7,7 +7,7 @@ import axios from 'axios'
 import {
   playNextVideo,
   updatePlayerHeight,
-  changePlaybackSuccess, requestPlaybackUpdate
+  changePlaybackSuccess, requestPlaybackUpdate, pauseVideo, playVideo
 } from '../actions'
 
 const GENIUS_API_KEY = 'DncOPjHRnMOPSe3Yzl56lpCsIah0zalJ-u9UjhWetfuaZ_4lsaA6RYhDsZSTEkWK'
@@ -52,19 +52,17 @@ export default () => {
   }, [video])
 
   useEffect(() => {
-    if (player && player.current && player.current.scrollHeight) {
-      if (playerHeight !== player.current.scrollHeight) {
-        video && dispatch(updatePlayerHeight(player.current.scrollHeight))
-      }
+    if (player && player.current && player.current.scrollHeight
+        && player.current.scrollHeight !== playerHeight) {
+      video && dispatch(updatePlayerHeight(player.current.scrollHeight))
     }
   }, [player, video, dispatch, playerHeight])
 
   useEffect(() => {
     const handleResize = () => {
-      if (player && player.current && player.current.scrollHeight) {
-        if (playerHeight !== player.current.scrollHeight) {
-          dispatch(updatePlayerHeight(player.current.scrollHeight))
-        }
+      if (player && player.current && player.current.scrollHeight
+          && player.current.scrollHeight !== playerHeight) {
+        dispatch(updatePlayerHeight(player.current.scrollHeight))
       }
     }
     window.addEventListener('resize', handleResize)
@@ -86,6 +84,8 @@ export default () => {
               ref={player}
               controls
               playing={isPlaying}
+              onPause={() => dispatch(pauseVideo())}
+              onPlay={() => dispatch(playVideo())}
               url={`https://www.youtube.com/watch?v=${video.id}`}
               onProgress={progress => {
                 dispatch(requestPlaybackUpdate(progress.playedSeconds))

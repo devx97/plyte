@@ -5,7 +5,8 @@ import {
   UPDATE_PLAYER,
   UPDATE_PLAYER_SUCCESS,
   STOP_SEEKING,
-  START_SEEKING, UPDATE_PLAYER_STATE
+  START_SEEKING,
+  UPDATE_PLAYER_STATE
 } from '../actions/types'
 
 export default (state = {}, action) => {
