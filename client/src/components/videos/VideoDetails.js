@@ -8,7 +8,7 @@ import {
   playNextVideo,
   updatePlayerHeight,
   changePlaybackSuccess, requestPlaybackUpdate, pauseVideo, playVideo
-} from '../actions'
+} from '../../actions'
 
 const GENIUS_API_KEY = 'DncOPjHRnMOPSe3Yzl56lpCsIah0zalJ-u9UjhWetfuaZ_4lsaA6RYhDsZSTEkWK'
 

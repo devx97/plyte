@@ -15,7 +15,7 @@ import {
   stopSeeking,
   updatePlayback,
   updateVolume
-} from '../actions'
+} from '../../actions'
 
 const getIndexOfFirstNumber = elapsed => {
   for (let i = 0; i < elapsed.length; i++) {

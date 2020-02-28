@@ -1,5 +1,5 @@
 import React from 'react'
-import VideoPlaylistItem from './VideoPlaylistItem'
+import VideoPlaylistItem from './PlaylistVideo'
 import {List, Grid} from '@material-ui/core'
 import {useSelector} from 'react-redux'
 

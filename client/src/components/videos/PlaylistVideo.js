@@ -10,7 +10,7 @@ import {
   Typography,
   Paper
 } from '@material-ui/core'
-import {removeVideo, requestVideoChange} from '../actions'
+import {removeVideo, requestVideoChange} from '../../actions'
 import {useDispatch} from 'react-redux'
 
 export default ({video}) => {

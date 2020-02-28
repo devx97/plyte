@@ -1,7 +1,7 @@
 import React from 'react'
 import {Grid, Paper, ButtonBase, Typography} from '@material-ui/core'
 import {useDispatch} from 'react-redux'
-import {addSelectedVideo} from '../actions'
+import {addSelectedVideo} from '../../actions'
 
 export default ({video}) => {
   const dispatch = useDispatch()

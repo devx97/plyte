@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react'
 import {TextField, InputAdornment} from '@material-ui/core'
 import Search from '@material-ui/icons/Search';
-import {addFirstVideo, searchForVideos} from '../actions'
+import {addFirstVideo, searchForVideos} from '../../actions'
 import {useDispatch} from 'react-redux'
 import {debounce} from 'lodash'
 
