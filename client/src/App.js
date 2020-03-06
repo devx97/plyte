@@ -1,13 +1,18 @@
-import React, {useEffect} from 'react'
+import React, {Fragment, useEffect} from 'react'
 
-import {createMuiTheme, CssBaseline, Paper} from '@material-ui/core'
+import {Container, createMuiTheme, CssBaseline, Paper} from '@material-ui/core'
 import {ThemeProvider} from "@material-ui/styles";
 
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {INIT_SOCKET} from './actions/types'
 import Room from './pages/Room'
+import LoginPage from './pages/LoginPage'
+import Header from './components/layout/Header'
+import {Route, Routes} from 'react-router-dom'
+import Rooms from './pages/Rooms'
 
 export default () => {
+  const nickname = useSelector(state => state.auth.nickname)
   const dispatch = useDispatch()
   useEffect(() => dispatch({type: INIT_SOCKET}))
 
@@ -16,9 +21,19 @@ export default () => {
   return (
       <ThemeProvider theme={theme}>
         <CssBaseline/>
-        <Paper style={{maxWidth: 1200, margin: '0 auto', padding: 5}} elevation={3}>
-          <Room/>
-        </Paper>
+        {nickname
+            ? <Fragment>
+              <Header/>
+              <Paper elevation={3}>
+                <Container style={{padding: 0}}>
+                  <Routes>
+                    <Route path={'/'} element={<Rooms/>}/>
+                    <Route path={'/room'} element={<Room/>}/>
+                  </Routes>
+                </Container>
+              </Paper>
+            </Fragment>
+            : <LoginPage/>}
       </ThemeProvider>
   )
 }

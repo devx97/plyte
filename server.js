@@ -1,22 +1,26 @@
-let express = require('express')
-const path = require('path');
-
 let socket = require('socket.io')
 const _ = require('lodash')
 
-let app = express()
-
-const PORT = process.env.PORT || 4000;
-
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'client/build')));
-}
-
-let server = app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`)
-})
-
 let playlist = []
+let rooms = [{
+  name: "Testing room",
+  currentVideo: "JUNG IGI",
+  password: "test",
+  users: [
+    "XD", "XDD"
+  ],
+  maxUsers: 5,
+  createdAt: Date.now(),
+}, {
+  name: "Testing rom XD",
+  currentVideo: "ZIMSONE",
+  password: false,
+  users: [],
+  maxUsers: 5,
+  createdAt: Date.now(),
+}]
+let users = []
+let counter = 0
 let currentIndex = -1
 let playerState = {
   volume: 100,
@@ -24,14 +28,19 @@ let playerState = {
   isPlaying: true
 }
 
-let io = socket(server)
+let io = socket()
 
 const sockets = io.sockets
 
+const PORT = process.env.PORT || 4000
+io.listen(PORT, {cookie: false})
+
 sockets.on('connection', socket => {
-  socket.join('default')
-  socket.emit('setup', {playlist, currentVideo: playlist[currentIndex], playerState})
+  socket.emit('setup', {playlist, currentVideo: playlist[currentIndex], playerState, rooms})
   socket.on('addVideo', (video, addAsNext) => {
+    if (playlist.find(item => item.id === video.id)) {
+      return
+    }
     if (addAsNext) {
       playlist.splice(currentIndex + 1, 0, video)
       sockets.in('default').emit('updateVideo', video)
@@ -39,11 +48,9 @@ sockets.on('connection', socket => {
     } else {
       playlist = [...playlist, video]
     }
-    // socket.emit('updateList', playlist)
     sockets.in('default').emit('updateList', playlist)
   })
   socket.on('selectVideo', selectedVideo => {
-    console.log(selectedVideo)
     if (typeof selectedVideo === 'number') {
       if (playlist[currentIndex + selectedVideo]) {
         sockets.in('default').emit('updateVideo', playlist[currentIndex + selectedVideo])
@@ -101,5 +108,18 @@ sockets.on('connection', socket => {
   socket.on('pauseVideo', () => {
     playerState.isPlaying = false
     sockets.in('default').emit('updatePlayerState', playerState)
+  })
+  socket.on('logIn', nickname => {
+    if (users.find(user => user.nickname === nickname)) {
+      socket.emit('logInFailed', 'Username taken!')
+    } else {
+      const newUser = {id: counter, nickname}
+      users.push(newUser)
+      socket.emit('logInSuccess', newUser)
+      counter++
+    }
+  })
+  socket.on('requestUpdateRooms', () => {
+    socket.emit('updateRooms', rooms)
   })
 })

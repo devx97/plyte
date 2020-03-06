@@ -4,7 +4,12 @@ import {
   UPDATE_PLAYLIST,
   ADD_VIDEO,
   REMOVE_VIDEO,
-  UPDATE_PLAYER_HEIGHT, UPDATE_MASTER, SELECT_VIDEO, REQUEST_NEXT_VIDEO, REQUEST_PLAYBACK_CHANGE
+  UPDATE_PLAYER_HEIGHT,
+  UPDATE_MASTER,
+  SELECT_VIDEO,
+  REQUEST_NEXT_VIDEO,
+  REQUEST_PLAYBACK_CHANGE,
+  REQUEST_UPDATE_ROOMS, UPDATE_ROOMS
 } from './types'
 
 import axios from 'axios'
@@ -123,4 +128,13 @@ export const requestVideoChange = video => ({
 export const requestPlaybackChange = playback => ({
   type: REQUEST_PLAYBACK_CHANGE,
   playback
+})
+
+export const requestUpdateRooms = () => ({
+  type: REQUEST_UPDATE_ROOMS
+})
+
+export const updateRooms = rooms => ({
+  type: UPDATE_ROOMS,
+  rooms
 })

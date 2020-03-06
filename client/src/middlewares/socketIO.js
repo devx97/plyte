@@ -3,13 +3,20 @@ import {
   updateLocalPlaylist,
   updateCurrentVideo,
   updatePlayback,
-  changePlayback, updatePlayerState
+  changePlayback, updatePlayerState, updateAuth, logInError, updateRooms
 } from '../actions'
 import {
   ADD_VIDEO,
-  INIT_SOCKET, PAUSE_VIDEO, PLAY_VIDEO,
+  INIT_SOCKET,
+  LOGIN,
+  PAUSE_VIDEO,
+  PLAY_VIDEO,
   REMOVE_VIDEO,
-  REQUEST_NEXT_VIDEO, REQUEST_PLAYBACK_CHANGE, REQUEST_PLAYBACK_UPDATE, REQUEST_VOLUME_CHANGE,
+  REQUEST_NEXT_VIDEO,
+  REQUEST_PLAYBACK_CHANGE,
+  REQUEST_PLAYBACK_UPDATE,
+  REQUEST_UPDATE_ROOMS,
+  REQUEST_VOLUME_CHANGE,
   SELECT_VIDEO
 } from '../actions/types'
 import _ from 'lodash'
@@ -20,7 +27,7 @@ export default () => ({getState, dispatch}) => next => action => {
   switch (action.type) {
     case INIT_SOCKET:
       if (process.env.NODE_ENV === 'development') {
-        socket = socketIO('http://192.168.0.15:4000')
+        socket = socketIO('http://192.168.0.20:4000')
       } else {
         socket = socketIO()
       }
@@ -50,6 +57,15 @@ export default () => ({getState, dispatch}) => next => action => {
           dispatch(changePlayback())
         }
       })
+      socket.on('logInSuccess', userData => {
+        dispatch(updateAuth(userData))
+      })
+      socket.on('logInFailed', message => {
+        dispatch(logInError(message))
+      })
+      socket.on('updateRooms', rooms => {
+        dispatch(updateRooms(rooms))
+      })
       return
     case ADD_VIDEO:
       const playlist = getState().client.playlist
@@ -73,6 +89,10 @@ export default () => ({getState, dispatch}) => next => action => {
       return socket.emit('playVideo')
     case PAUSE_VIDEO:
       return socket.emit('pauseVideo')
+    case LOGIN:
+      return socket.emit('logIn', action.nickname)
+    case REQUEST_UPDATE_ROOMS:
+      return socket.emit('requestUpdateRooms')
     default:
       return next(action)
   }

@@ -3,7 +3,8 @@ import {
   UPDATE_SOCKET,
   UPDATE_PLAYLIST,
   UPDATE_PLAYER_HEIGHT,
-  UPDATE_MASTER
+  UPDATE_MASTER,
+  UPDATE_ROOMS
 } from '../actions/types'
 
 export default (state = {}, action) => {
@@ -18,6 +19,8 @@ export default (state = {}, action) => {
       return {...state, playerHeight: action.height}
     case UPDATE_MASTER:
       return {...state, master: action.master}
+    case UPDATE_ROOMS:
+      return {...state, rooms: action.rooms}
     default:
       return state
   }
