@@ -16,7 +16,7 @@ import axios from 'axios'
 import querystring from 'querystring'
 import moment, {ISO_8601} from 'moment'
 
-const YOUTUBE_API_KEY = 'AIzaSyCVdT6xJMmub0pTiQfRJLOP0r-K3r9vpnE'
+const YOUTUBE_API_KEY = 'AIzaSyDh8eLZo-rNHbAaSpGVgLaEqs0qUJQ7Y1Y'
 
 const YouTubeSearchAPI = 'https://www.googleapis.com/youtube/v3/search?'
 const YouTubeVideosAPI = 'https://www.googleapis.com/youtube/v3/videos?'

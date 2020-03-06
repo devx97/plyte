@@ -3,22 +3,24 @@ const _ = require('lodash')
 
 let playlist = []
 let rooms = [{
-  name: "Testing room",
-  currentVideo: "JUNG IGI",
+  name: "1",
+  currentVideo: "Young Igi ft. Włodi - THC",
   password: "test",
   users: [
     "XD", "XDD"
   ],
   maxUsers: 5,
   createdAt: Date.now(),
-}, {
-  name: "Testing rom XD",
-  currentVideo: "ZIMSONE",
+},
+  {
+  name: "2",
+  currentVideo: "Zeamsone \"SPORT\" ft. Young Igi (Official Visualiser)",
   password: false,
   users: [],
   maxUsers: 5,
   createdAt: Date.now(),
-}]
+}
+]
 let users = []
 let counter = 0
 let currentIndex = -1
@@ -120,6 +122,8 @@ sockets.on('connection', socket => {
     }
   })
   socket.on('requestUpdateRooms', () => {
-    socket.emit('updateRooms', rooms)
+    let formattedRooms = JSON.parse(JSON.stringify(rooms))
+    formattedRooms = formattedRooms.map(room => ({...room, users: room.users.length, password: !!room.password}))
+    socket.emit('updateRooms', formattedRooms)
   })
 })
