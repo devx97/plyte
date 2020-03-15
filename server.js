@@ -9,7 +9,7 @@ let app = express()
 const PORT = process.env.PORT || 4000;
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'client/build')));
+  app.use(express.static(path.join(__dirname, 'client', 'build')));
 }
 
 let server = app.listen(PORT, () => {
