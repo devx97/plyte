@@ -1,5 +1,20 @@
+let express = require('express')
+const path = require('path');
+
 let socket = require('socket.io')
 const _ = require('lodash')
+
+let app = express()
+
+const PORT = process.env.PORT || 4000;
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'client/build')));
+}
+
+let server = app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`)
+})
 
 let playlist = []
 let rooms = [{
@@ -38,12 +53,9 @@ let playerState = {
   isPlaying: true
 }
 
-let io = socket()
+let io = socket(server, {cookie: false})
 
 const sockets = io.sockets
-
-const PORT = process.env.PORT || 4000
-io.listen(PORT, {cookie: false})
 
 sockets.on('connection', socket => {
   socket.join('default')
