@@ -6,7 +6,7 @@ import {useSelector} from 'react-redux'
 export default () => {
   const videos = useSelector(state => state.client.suggestedVideos)
 
-  return videos && videos.length
+  return videos?.length
       ? videos.map(video =>
           <VideoListItem
               key={video.id}

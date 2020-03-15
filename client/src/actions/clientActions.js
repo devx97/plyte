@@ -9,7 +9,7 @@ import {
   SELECT_VIDEO,
   REQUEST_NEXT_VIDEO,
   REQUEST_PLAYBACK_CHANGE,
-  REQUEST_UPDATE_ROOMS, UPDATE_ROOMS
+  REQUEST_UPDATE_ROOMS, UPDATE_ROOMS, UPDATE_CURRENT_ROOM
 } from './types'
 
 import axios from 'axios'
@@ -137,4 +137,9 @@ export const requestUpdateRooms = () => ({
 export const updateRooms = rooms => ({
   type: UPDATE_ROOMS,
   rooms
+})
+
+export const updateCurrentRoom = roomId => ({
+  type: UPDATE_CURRENT_ROOM,
+  roomId
 })

@@ -36,7 +36,7 @@ export default () => {
   let duration
   let elapsed = new Date(1000 * Math.round(playback)).toISOString().substr(11, 8)
 
-  if (video && video.duration) {
+  if (video?.duration) {
     duration = new Date(1000 * Math.round(video.duration || 0)).toISOString().substr(11, 8)
     indexOfFirstNumber = getIndexOfFirstNumber(duration)
     elapsed = elapsed.substr(indexOfFirstNumber, 8 - indexOfFirstNumber)

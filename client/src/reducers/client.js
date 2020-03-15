@@ -4,10 +4,10 @@ import {
   UPDATE_PLAYLIST,
   UPDATE_PLAYER_HEIGHT,
   UPDATE_MASTER,
-  UPDATE_ROOMS
+  UPDATE_ROOMS, UPDATE_CURRENT_ROOM
 } from '../actions/types'
 
-export default (state = {}, action) => {
+export default (state = {currentRoom: ''}, action) => {
   switch (action.type) {
     case UPDATE_PLAYLIST:
       return {...state, playlist: action.playlist}
@@ -21,6 +21,8 @@ export default (state = {}, action) => {
       return {...state, master: action.master}
     case UPDATE_ROOMS:
       return {...state, rooms: action.rooms}
+    case UPDATE_CURRENT_ROOM:
+      return {...state, currentRoom: action.roomId}
     default:
       return state
   }

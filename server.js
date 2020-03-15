@@ -3,7 +3,7 @@ const _ = require('lodash')
 
 let playlist = []
 let rooms = [{
-  name: "1",
+  id: 0,
   currentVideo: "Young Igi ft. Włodi - THC",
   password: "test",
   users: [
@@ -13,13 +13,21 @@ let rooms = [{
   createdAt: Date.now(),
 },
   {
-  name: "2",
-  currentVideo: "Zeamsone \"SPORT\" ft. Young Igi (Official Visualiser)",
-  password: false,
-  users: [],
-  maxUsers: 5,
-  createdAt: Date.now(),
-}
+    id: 2,
+    currentVideo: "Zeamsone \"SPORT\" ft. Young Igi (Official Visualiser)",
+    password: false,
+    users: [],
+    maxUsers: 5,
+    createdAt: Date.now(),
+  },
+  {
+    id: 1,
+    currentVideo: "PRO8L3M - W domach z betonu",
+    password: false,
+    users: ["XD"],
+    maxUsers: 2,
+    createdAt: Date.now(),
+  }
 ]
 let users = []
 let counter = 0
@@ -38,6 +46,7 @@ const PORT = process.env.PORT || 4000
 io.listen(PORT, {cookie: false})
 
 sockets.on('connection', socket => {
+  socket.join('default')
   socket.emit('setup', {playlist, currentVideo: playlist[currentIndex], playerState, rooms})
   socket.on('addVideo', (video, addAsNext) => {
     if (playlist.find(item => item.id === video.id)) {
@@ -123,7 +132,8 @@ sockets.on('connection', socket => {
   })
   socket.on('requestUpdateRooms', () => {
     let formattedRooms = JSON.parse(JSON.stringify(rooms))
-    formattedRooms = formattedRooms.map(room => ({...room, users: room.users.length, password: !!room.password}))
+    formattedRooms = formattedRooms.map(
+        room => ({...room, users: room.users.length, password: !!room.password}))
     socket.emit('updateRooms', formattedRooms)
   })
 })

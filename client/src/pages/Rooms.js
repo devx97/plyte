@@ -1,11 +1,8 @@
-import React, {Fragment, useEffect, useState} from 'react'
+import React, {Fragment, useEffect, forwardRef} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import {requestUpdateRooms} from '../actions'
-import {
-  Container, useTheme,
-} from '@material-ui/core'
-import MaterialTable, {MTableCell, MTableHeader} from 'material-table'
-import {forwardRef} from 'react';
+import {requestUpdateRooms, updateCurrentRoom} from '../actions'
+import {Container, useTheme} from '@material-ui/core'
+import MaterialTable from 'material-table'
 import {
   AddBox,
   ArrowDownward,
@@ -25,10 +22,7 @@ import {
   Search,
   ViewColumn
 } from '@material-ui/icons'
-
-import _ from 'lodash'
-import Typography from '@material-ui/core/Typography'
-import Paper from '@material-ui/core/Paper'
+import {useNavigate} from 'react-router-dom'
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref}/>),
@@ -49,45 +43,30 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref}/>),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref}/>)
 }
+
 export default () => {
   const rooms = useSelector(state => state.client.rooms) || []
   const theme = useTheme()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const columns = [
     {
-      title: "ID", field: "name",
-      icon: {},
-      width: 50,
-      render: rowData =>
-          <Typography variant="subtitle1" style={{overflow: 'hidden'}}>
-            {rowData.name}
-          </Typography>
-    },
-    {
-      title: "Current Video", field: "currentVideo",
-      render: rowData =>
-          <Typography variant="subtitle1" style={{overflow: 'hidden'}}>
-            {rowData.currentVideo}
-          </Typography>
-    },
-    {
-      title: "Pass", field: "password", type: 'numeric',
-      width: 50,
+      title: "ID", field: "id", width: 1, type: 'numeric',
+    }, {
+      title: "Current Video", field: "currentVideo"
+    }, {
+      title: "Pass", field: "password", type: 'numeric', width: 1,
       render: rowData => rowData.password ? <Lock/> : <LockOpen/>
-    },
-    {
-      title: "Users", field: "users",
-      size: 'small',
-      width: 50,
-      type: 'numeric',
+    }, {
+      title: "Users", field: "users", width: 1, type: 'numeric',
       render: rowData => <Fragment>{rowData.users} / {rowData.maxUsers}</Fragment>
     },
   ]
 
   useEffect(() => {
     dispatch(requestUpdateRooms())
-  }, [])
+  }, [dispatch])
 
   return (
       <Container maxWidth={'md'} style={{padding: 0}}>
@@ -96,15 +75,18 @@ export default () => {
             columns={columns}
             data={rooms}
             icons={tableIcons}
-            fixedHeader={false}
+            onRowClick={(event, rowData) => {
+              if (rowData.password) {
+                console.log('PASS')
+              } else {
+                dispatch(updateCurrentRoom(rowData.id))
+                navigate(`/room/${rowData.id}`)
+              }
+            }}
             options={{
               emptyRowsWhenPaging: false,
-              cellStyle: {
-                padding: theme.spacing(0.5)
-              },
-              headerStyle: {
-                padding: theme.spacing(0.5),
-              },
+              cellStyle: {padding: theme.spacing(0.5)},
+              headerStyle: {padding: theme.spacing(0.5)},
               searchFieldStyle: {maxWidth: 200}
             }}
         />

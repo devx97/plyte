@@ -20,6 +20,7 @@ import {
   SELECT_VIDEO
 } from '../actions/types'
 import _ from 'lodash'
+import {newAlert} from '../actions/alertActions'
 
 let socket
 
@@ -61,7 +62,7 @@ export default () => ({getState, dispatch}) => next => action => {
         dispatch(updateAuth(userData))
       })
       socket.on('logInFailed', message => {
-        dispatch(logInError(message))
+        dispatch(newAlert(message, 'error'))
       })
       socket.on('updateRooms', rooms => {
         dispatch(updateRooms(rooms))

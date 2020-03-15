@@ -47,21 +47,19 @@ export default () => {
   const playerShouldBeUpdated = useSelector(state => state.player.playerShouldBeUpdated)
 
   useEffect(() => async () => {
-    const URL = await generateGeniusSongURL(video && video.title)
+    const URL = await generateGeniusSongURL(video?.title)
     setGeniusURL(URL)
   }, [video])
 
   useEffect(() => {
-    if (player && player.current && player.current.scrollHeight
-        && player.current.scrollHeight !== playerHeight) {
+    if (player?.current?.scrollHeight !== playerHeight) {
       video && dispatch(updatePlayerHeight(player.current.scrollHeight))
     }
   }, [player, video, dispatch, playerHeight])
 
   useEffect(() => {
     const handleResize = () => {
-      if (player && player.current && player.current.scrollHeight
-          && player.current.scrollHeight !== playerHeight) {
+      if (player?.current?.scrollHeight !== playerHeight) {
         dispatch(updatePlayerHeight(player.current.scrollHeight))
       }
     }

@@ -9,9 +9,11 @@ import VideoPlaylist from '../components/videos/Playlist'
 import VideoDetail from '../components/videos/VideoDetails'
 import HostButton from '../components/utils/HostButton'
 import PlayerControls from '../components/player/PlayerControls'
+// import {useRouteMatch} from 'react-router-dom'
 
 export default () => {
   const master = useSelector(state => state.client.master)
+  // const match = useRouteMatch()
 
   return (
       <Fragment>
