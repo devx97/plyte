@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 4000;
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client', 'build')))
-  app.use('static', express.static(path.join(__dirname, 'client', 'build', 'static')))
+  app.use('/static', express.static(path.join(__dirname, 'client', 'build', 'static')))
 }
 
 let server = app.listen(PORT, () => {
