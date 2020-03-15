@@ -6,8 +6,7 @@
     "node": "12.16.x"
   },
   "scripts": {
-    "start": "node server.js",
-    "heroku-postbuild": "npm install --prefix client && npm run build --prefix client"
+    "start": "node server.js"
 },
   "dependencies": {
     "express": "^4.17.1",
