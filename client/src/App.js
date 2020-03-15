@@ -16,7 +16,7 @@ import Alert from './components/utils/Alert'
 export default () => {
   const nickname = useSelector(state => state.auth.nickname)
   const dispatch = useDispatch()
-  useEffect(() => dispatch({type: INIT_SOCKET}))
+  useEffect(() => dispatch({type: INIT_SOCKET}), [])
   const theme = createMuiTheme({palette: {type: "dark"}})
 
   const routes = useRoutes([
