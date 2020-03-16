@@ -12,5 +12,9 @@
     "express": "^4.17.1",
     "lodash": "^4.17.15",
     "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.0.0-beta.13",
+    "webpack-node-externals": "^1.7.2"
   }
 }
