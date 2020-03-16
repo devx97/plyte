@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core'
 
 export default () => {
-  const [open, setOpen] = React.useState(true)
+  const [open, setOpen] = React.useState(false)
 
   const handleClose = () => {
     setOpen(false)
