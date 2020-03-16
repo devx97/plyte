@@ -211,5 +211,6 @@ package-lock.json
 
 client/node_modules
 client/package-lock.json
+client/build
 
 # End of https://www.gitignore.io/api/node,react,intellij+all
