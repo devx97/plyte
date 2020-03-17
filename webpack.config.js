@@ -24,7 +24,6 @@ const clientConfig = {
         options: {
           presets: [
             ["@babel/preset-env", {
-              debug: true,
               useBuiltIns: 'usage',
               corejs: 3,
             }],
@@ -55,12 +54,10 @@ const clientConfig = {
     port: 3000,
     open: true,
     hot: true,
+    historyApiFallback: true,
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: './public/index.html',
-      favicon: './public/favicon.ico'
-    }),
+    new HtmlWebpackPlugin({template: './public/index.html'}),
     mode === 'development' && new ReactRefreshWebpackPlugin({disableRefreshCheck: true})
   ]
 }
