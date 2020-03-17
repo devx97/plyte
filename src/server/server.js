@@ -8,9 +8,7 @@ let app = express()
 
 const PORT = process.env.PORT || 4000;
 
-if (process.env.NODE_ENV === 'production') {
-  app.get('/*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')))
-}
+app.get('/*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')))
 
 let server = app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`)
@@ -53,7 +51,7 @@ let playerState = {
   isPlaying: true
 }
 
-let io = socket(server, {cookie: false})
+let io = socket(server, {cookie: false, serveClient: false})
 
 const sockets = io.sockets
 

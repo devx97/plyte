@@ -1,13 +1,16 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const {CleanWebpackPlugin} = require('clean-webpack-plugin')
-const nodeExternals = require('webpack-node-externals')
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin")
 
 const outputDirectory = 'public';
 
+const mode = process.env.NODE_ENV === 'production' ? 'production' : 'development'
+
 const clientConfig = {
-  mode: 'development',
+  mode,
+  devtool: 'eval-source-map',
   entry: ['core-js/stable', './src/client/index.js'],
+  stats: 'errors-warnings',
   output: {
     path: path.join(__dirname, outputDirectory),
     filename: 'bundle.js'
@@ -27,7 +30,10 @@ const clientConfig = {
             }],
             ["@babel/preset-react"]
           ],
-          plugins: ["@babel/plugin-proposal-class-properties", "react-hot-loader/babel"]
+          plugins: [
+            "@babel/plugin-proposal-class-properties",
+            mode === 'development' && require.resolve("react-refresh/babel")
+          ],
         }
       }
     }, {
@@ -51,22 +57,30 @@ const clientConfig = {
     hot: true,
   },
   plugins: [
-    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: './public/index.html',
       favicon: './public/favicon.ico'
-    })
+    }),
+    mode === 'development' && new ReactRefreshWebpackPlugin({disableRefreshCheck: true})
   ]
 }
 
 const serverConfig = {
-  entry: './server.js',
+  entry: './src/server/server.js',
   target: 'node',
+  mode,
   output: {
     filename: 'app.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, outputDirectory),
   },
-  externals: [nodeExternals()]
+  module: {
+    rules: [
+      {
+        test: /\.node$/,
+        use: 'node-loader'
+      }
+    ],
+  }
 }
 
 module.exports = [clientConfig, serverConfig]
